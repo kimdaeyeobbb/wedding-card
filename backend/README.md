@@ -31,6 +31,78 @@
 $ pnpm install
 ```
 
+### Database Setup
+
+This project uses TypeORM with PostgreSQL for database management. Follow these steps to set up the database:
+
+1. Make sure you have PostgreSQL installed and running on your machine.
+2. Create a new database for the project (default name: `wedding_card`).
+3. Copy the `.env.example` file to a new file named `.env`:
+   ```bash
+   $ cp .env.example .env
+   ```
+4. Update the `.env` file with your database credentials:
+   ```
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
+   DB_DATABASE=wedding_card
+   DB_SYNC=true
+   ```
+   Note: Set `DB_SYNC=false` in production to prevent automatic schema changes.
+
+### Working with TypeORM
+
+#### Entity Structure
+
+Entities are defined in the `src` directory, organized by feature. For example, the `Guest` entity is defined in `src/guests/entities/guest.entity.ts`:
+
+```typescript
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class Guest {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  // other columns...
+}
+```
+
+#### Creating a New Entity
+
+1. Create a new directory for your feature (e.g., `src/feature-name`)
+2. Create an `entities` directory inside it
+3. Create your entity file (e.g., `your-entity.entity.ts`)
+4. Define your entity class with TypeORM decorators
+5. Create a module file (e.g., `feature-name.module.ts`) and import TypeOrmModule.forFeature([YourEntity])
+6. Import your feature module in the app.module.ts
+
+#### Using Repositories
+
+To use TypeORM repositories in your services:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { YourEntity } from './entities/your-entity.entity';
+
+@Injectable()
+export class YourService {
+  constructor(
+    @InjectRepository(YourEntity)
+    private yourEntityRepository: Repository<YourEntity>,
+  ) {}
+
+  // Use repository methods like find(), findOne(), save(), etc.
+}
+```
+
 ## Compile and run the project
 
 ```bash
